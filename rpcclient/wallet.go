@@ -269,13 +269,13 @@ func (r FutureListSinceBlockResult) Receive() (*btcjson.ListSinceBlockResult, er
 // the returned instance.
 //
 // See ListSinceBlock for the blocking version and more details.
-func (c *Client) ListSinceBlockAsync(blockHash *chainhash.Hash) FutureListSinceBlockResult {
+func (c *Client) ListSinceBlockAsync(blockHash *chainhash.Hash, minConfirms int, watchOnly bool) FutureListSinceBlockResult {
 	var hash *string
 	if blockHash != nil {
 		hash = btcjson.String(blockHash.String())
 	}
 
-	cmd := btcjson.NewListSinceBlockCmd(hash, nil, nil)
+	cmd := btcjson.NewListSinceBlockCmd(hash, &minConfirms, &watchOnly)
 	return c.sendCmd(cmd)
 }
 
@@ -284,8 +284,8 @@ func (c *Client) ListSinceBlockAsync(blockHash *chainhash.Hash) FutureListSinceB
 // minimum confirmations as a filter.
 //
 // See ListSinceBlockMinConf to override the minimum number of confirmations.
-func (c *Client) ListSinceBlock(blockHash *chainhash.Hash) (*btcjson.ListSinceBlockResult, error) {
-	return c.ListSinceBlockAsync(blockHash).Receive()
+func (c *Client) ListSinceBlock(blockHash *chainhash.Hash, minConfirms int, watchOnly bool) (*btcjson.ListSinceBlockResult, error) {
+	return c.ListSinceBlockAsync(blockHash, minConfirms, watchOnly).Receive()
 }
 
 // ListSinceBlockMinConfAsync returns an instance of a type that can be used to
